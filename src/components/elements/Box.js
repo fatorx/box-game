@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
-import "../../styles.css";
 
-export default function Box(props) {
+import "../../index.css";
+
+const Box = props => {
+
     const [boxStyle, setBoxStyle] = useState("box");
-    const [boxAction, setBoxAction] = useState("green");
 
     useEffect(() => {
-        setBoxStyle("box " + props.color);
-        setBoxAction(props.action);
+        setBoxStyle(props.style);
     }, [props]);
+
+    const handlerClick = () => {
+        props.fct(props.color);
+    }
 
     return (
         <>
-            <div className={boxStyle} onClick={boxAction}></div>
+            <div className={boxStyle} onClick={handlerClick}   />
         </>
     );
 }
+
+export default Box;

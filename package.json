@@ -34,5 +34,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "easytimer-react-hook": "^1.0.3",
+    "easytimer.js": "^4.3.4"
   }
 }
