@@ -22,7 +22,7 @@ export default function App() {
     /* Hook configuration */
   });
 
-  let timerInterval = 1500;
+  let timerInterval = 700;
   let iterations = 3;
 
   let sequences = 0;
@@ -132,7 +132,9 @@ export default function App() {
 
   const checkResult = (clicksSuccess, numItemsRand) => {
     if (clicksSuccess === numItemsRand) {
-      setMessageStatus('Ganhou mano.');
+      let timerValue = timer.getTotalTimeValues().toString();
+      console.log(timer);
+      setMessageStatus('Ganhou mano. Tempo - ' + timerValue);
     } else {
       setMessageStatus('Perdeu rapá.');
     }
@@ -152,7 +154,7 @@ export default function App() {
     }
 
     if (numItemsRand === indexClick) {
-      checkResult(numItemsRand, indexClick);
+      checkResult(clicksSuccess, numItemsRand);
     }
 
     setIndexClick(indexClick + 1);
@@ -163,7 +165,7 @@ export default function App() {
         <div className={"message-game"}>{messageStatus}</div>
         <div>{timer.getTimeValues().toString(['seconds', 'secondTenths'])}</div>
 
-          <div className="box-items">
+          <div className="box-items" onClick={() => clickBox('green')}>
 
             <Box style={boxGreen} fct={clickBox} color={"green"} />
 
