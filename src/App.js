@@ -22,8 +22,8 @@ export default function App() {
     /* Hook configuration */
   });
 
-  let timerInterval = 700;
-  let iterations = 3;
+  let timerInterval = 600;
+  let iterations = 5;
 
   let sequences = 0;
 
@@ -167,7 +167,7 @@ export default function App() {
 
           <div className="box-items" onClick={() => clickBox('green')}>
 
-            <Box style={boxGreen} fct={clickBox} color={"green"} />
+            <Box style={boxGreen} fct={clickBox}  color={"green"} />
 
             <Box style={boxBlue} fct={clickBox} color={"blue"} />
 
