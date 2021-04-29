@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import {Concat, IsEmpty} from "react-lodash";
 import Box from "./components/elements/Box";
 import Random from "./components/math/Random";
 import useTimer from 'easytimer-react-hook';
@@ -13,6 +14,7 @@ export default function App() {
   const [boxYellow, setBoxYellow] = useState("box box-yellow");
 
   const [itemsRand, setItemsRand] = useState([]);
+  const [sequences, setSequences] = useState(1);
   const [messageStatus, setMessageStatus] = useState('Vamos jogar?');
   const [indexClick, setIndexClick] = useState(0);
   const [clicksSuccess, setClicksSuccess] = useState(0);
@@ -22,10 +24,10 @@ export default function App() {
     /* Hook configuration */
   });
 
-  let timerInterval = 700;
-  let iterations = 3;
+  let timerInterval = 1000;
+  let iterations = 2;
 
-  let sequences = 0;
+  let numSequences = 2;
 
   let items = ["green", "blue", "red", "yellow"];
   let list  = [];
@@ -79,8 +81,14 @@ export default function App() {
     setBoxYellow("box box-yellow");
     setMessageStatus('Vamos jogar?');
     clearInterval(interval);
+
     timer.stop();
   };
+
+  const stopCycle = () => {
+    removeAllBlink();
+    setItemsRand([]);
+  }
 
   const changeBlink = () => {
     currentBlink = list[index];
@@ -93,6 +101,14 @@ export default function App() {
         removeAllBlink();
         clearInterval(interval);
         index = 0;
+
+        if (sequences < numSequences) {
+          // restart
+          setSequences(sequences + 1);
+
+          return () => {};
+        }
+
 
         setMessageStatus('Agora é com você.');
         timer.start({
@@ -112,19 +128,22 @@ export default function App() {
 
     clearInterval(interval);
     index = 0;
+
     let listRand = []; // checar sequências
+    let previousItems = itemsRand;
     let num = 0;
     for (let i = 0; i < iterations; ++i) {
       num = Random(num);
       listRand.push(items[num]);
     }
 
-    //listRand = ['blue', 'blue', 'red', 'red'];
-    setItemsRand(listRand);
+    //listRand = ['blue', 'blue'];
+    previousItems = previousItems.concat(listRand);
+    setItemsRand(previousItems);
     setClicksSuccess(0);
     setIndexClick(0);
 
-    list = listRand;
+    list = previousItems;
     console.log(list);
 
     changeBlink();
@@ -179,7 +198,7 @@ export default function App() {
 
           <div className="box-buttons">
             <button onClick={startRandom}>Começar</button>
-            <button onClick={removeAllBlink}>Para tudo</button>
+            <button onClick={stopCycle}>Para tudo</button>
           </div>
 
       </div>
