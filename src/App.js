@@ -186,7 +186,7 @@ export default function App() {
 
           <div className="box-items" onClick={() => clickBox('green')}>
 
-            <Box style={boxGreen} fct={clickBox} color={"green"} />
+            <Box style={boxGreen} fct={clickBox}  color={"green"} />
 
             <Box style={boxBlue} fct={clickBox} color={"blue"} />
 
