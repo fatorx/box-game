@@ -12,6 +12,8 @@
 }
 
 body {
+  display: flex;
+  justify-content: center;
   background: black;
   color: white;
 }
@@ -75,14 +77,14 @@ button {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  width: 300px;
 }
 
 .box-items {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
-  width: 90%;
-  padding: 10px;
   border: 1px solid #ccc;
   margin-top:10px;
 }
@@ -96,11 +98,30 @@ button {
 }
 
 .box {
-  width: 100%;
-  height: 90px;
-  margin-bottom:10px;
+  width: 129px;
+  height: 129px;
+  margin: 10px;
   cursor: pointer;
 }
+
+.info-controls {
+  display: flex;
+  justify-content: flex-start;
+  border: 1px solid #ccc;
+  margin-top:10px;
+}
+
+.info-controls ul {
+  list-style: none;
+  margin:0;
+  padding: 0;
+}
+
+.info-controls ul li {
+  margin:15px;
+  text-align: left;
+}
+
 
 .box-green {
   background: green;

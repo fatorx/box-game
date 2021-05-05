@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import {Concat, IsEmpty} from "react-lodash";
 import Box from "./components/elements/Box";
 import Random from "./components/math/Random";
 import useTimer from 'easytimer-react-hook';
@@ -8,26 +7,28 @@ import useTimer from 'easytimer-react-hook';
 import "./index.css";
 
 export default function App() {
+  const START_MSG = 'Vamos jogar?';
+
   const [boxGreen, setBoxGreen]   = useState("box box-green");
   const [boxBlue, setBoxBlue]     = useState("box box-blue");
   const [boxRed, setBoxRed]       = useState("box box-red");
   const [boxYellow, setBoxYellow] = useState("box box-yellow");
 
   const [itemsRand, setItemsRand] = useState([]);
-  const [sequences, setSequences] = useState(1);
-  const [messageStatus, setMessageStatus] = useState('Vamos jogar?');
+  const [sequences, setSequences] = useState(0);
+  const [sequencesSuccess, setSequencesSuccess] = useState(0);
+  const [messageStatus, setMessageStatus] = useState(START_MSG);
   const [indexClick, setIndexClick] = useState(0);
   const [clicksSuccess, setClicksSuccess] = useState(0);
+  const [timerResolver, setTimerResolver] = useState([]);
 
-  /* The hook returns an EasyTimer instance and a flag to see if the target has been achieved */
   const [timer, isTargetAchieved] = useTimer({
-    /* Hook configuration */
+    precision: 'secondTenths'
   });
 
-  let timerInterval = 1000;
-  let iterations = 2;
-
-  let numSequences = 2;
+  const timerInterval = 1000;
+  const iterations    = 2;
+  const numSequences  = 2;
 
   let items = ["green", "blue", "red", "yellow"];
   let list  = [];
@@ -79,7 +80,7 @@ export default function App() {
     setBoxRed("box box-red");
     setBoxBlue("box box-blue");
     setBoxYellow("box box-yellow");
-    setMessageStatus('Vamos jogar?');
+    //setMessageStatus('Vamos jogar?');
     clearInterval(interval);
 
     timer.stop();
@@ -97,24 +98,16 @@ export default function App() {
     interval = setInterval(() => {
       removeBlink(currentBlink);
       ++index;
+
       if (index === list.length) {
         removeAllBlink();
         clearInterval(interval);
         index = 0;
 
-        if (sequences < numSequences) {
-          // restart
-          setSequences(sequences + 1);
-
-          return () => {};
-        }
-
-
+        setSequences(sequences + 1);
         setMessageStatus('Agora é com você.');
-        timer.start({
-          /* EasyTimer start configuration */
-          precision: 'secondTenths'
-        });
+
+        timer.start();
 
         return () => {};
       }
@@ -124,8 +117,20 @@ export default function App() {
     }, timerInterval);
   };
 
-  const startRandom = () => {
+  const closeGame = () => {
+    setItemsRand([]);
+    setIndexClick(0);
+    setClicksSuccess(0);
+    setSequences(0);
 
+    removeAllBlink();
+    clearInterval(interval);
+    index = 0;
+
+    return () => {};
+  };
+
+  const startRandom = () => {
     clearInterval(interval);
     index = 0;
 
@@ -137,35 +142,46 @@ export default function App() {
       listRand.push(items[num]);
     }
 
-    //listRand = ['blue', 'blue'];
+    listRand = ['red', 'yellow'];
     previousItems = previousItems.concat(listRand);
     setItemsRand(previousItems);
     setClicksSuccess(0);
     setIndexClick(0);
 
+    console.log(previousItems);
     list = previousItems;
-    console.log(list);
-
     changeBlink();
+  };
+
+  const startGame = () => {
+    setMessageStatus(START_MSG);
+    setSequencesSuccess(0);
+    startRandom();
   };
 
   const checkResult = (clicksSuccess, numItemsRand) => {
     if (clicksSuccess === numItemsRand) {
-      let timerValue = timer.getTotalTimeValues().toString();
-      console.log(timer);
-      setMessageStatus('Ganhou mano. Tempo - ' + timerValue);
-    } else {
-      setMessageStatus('Perdeu rapá.');
+      setSequencesSuccess(sequencesSuccess + 1);
+      setIndexClick(0);
+      setClicksSuccess(0);
+      startRandom();
     }
 
-    setItemsRand([]);
-    setClicksSuccess(0);
-    setIndexClick(0);
+    if (sequences === numSequences) {
+      console.log(sequencesSuccess +"==="+ numSequences);
+      if (sequencesSuccess === numSequences) {
+        setMessageStatus('Você venceu.');
+      } else {
+        setMessageStatus('Você perdeu. Tente novamente.');
+      }
+
+      return closeGame();
+    }
+
     timer.stop();
   };
 
   const clickBox = (item) => {
-
     let numItemsRand = itemsRand.length - 1;
 
     if (itemsRand[indexClick] === item) {
@@ -174,9 +190,10 @@ export default function App() {
 
     if (numItemsRand === indexClick) {
       checkResult(clicksSuccess, numItemsRand);
+    } else {
+      setIndexClick(indexClick + 1);
     }
 
-    setIndexClick(indexClick + 1);
   };
 
   return (
@@ -197,10 +214,16 @@ export default function App() {
           </div>
 
           <div className="box-buttons">
-            <button onClick={startRandom}>Começar</button>
+            <button onClick={startGame}>Começar</button>
             <button onClick={stopCycle}>Para tudo</button>
           </div>
 
+          <div className="info-controls">
+            <ul>
+              <li>Sequência: {sequences}</li>
+              <li>Cliques: {clicksSuccess}</li>
+            </ul>
+          </div>
       </div>
   );
 }
