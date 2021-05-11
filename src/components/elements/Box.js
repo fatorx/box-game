@@ -8,7 +8,7 @@ const Box = props => {
 
     useEffect(() => {
         setBoxStyle(props.style);
-    }, [props]);
+    }, []);
 
     const handlerClick = () => {
         props.fct(props.color);

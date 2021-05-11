@@ -20,6 +20,7 @@ export default function App() {
   const [messageStatus, setMessageStatus] = useState(START_MSG);
   const [indexClick, setIndexClick] = useState(0);
   const [clicksSuccess, setClicksSuccess] = useState(0);
+  const [display, setDisplay] = useState(0);
   const [timerResolver, setTimerResolver] = useState([]);
 
   const [timer, isTargetAchieved] = useTimer({
@@ -28,7 +29,7 @@ export default function App() {
 
   const timerInterval = 1000;
   const iterations    = 2;
-  const numSequences  = 2;
+  const numSequences  = 1;
 
   let items = ["green", "blue", "red", "yellow"];
   let list  = [];
@@ -148,7 +149,7 @@ export default function App() {
     setClicksSuccess(0);
     setIndexClick(0);
 
-    console.log(previousItems);
+    setDisplay(previousItems.toString())
     list = previousItems;
     changeBlink();
   };
@@ -160,6 +161,7 @@ export default function App() {
   };
 
   const checkResult = (clicksSuccess, numItemsRand) => {
+    console.log(clicksSuccess + "===" + numItemsRand);
     if (clicksSuccess === numItemsRand) {
       setSequencesSuccess(sequencesSuccess + 1);
       setIndexClick(0);
@@ -168,6 +170,7 @@ export default function App() {
     }
 
     if (sequences === numSequences) {
+      console.log("End Sequence");
       console.log(sequencesSuccess +"==="+ numSequences);
       if (sequencesSuccess === numSequences) {
         setMessageStatus('Você venceu.');
@@ -222,6 +225,7 @@ export default function App() {
             <ul>
               <li>Sequência: {sequences}</li>
               <li>Cliques: {clicksSuccess}</li>
+              <li>Seq: {display}</li>
             </ul>
           </div>
       </div>
