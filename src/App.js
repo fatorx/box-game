@@ -4,7 +4,7 @@ import Box from "./components/elements/Box";
 import Random from "./components/math/Random";
 import useTimer from 'easytimer-react-hook';
 
-import "./index.css";
+import "./App.css";
 
 export default function App() {
   const START_MSG = 'Vamos jogar?';
