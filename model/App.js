@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Box from "./components/elements/Box";
 import Random from "./components/math/Random";
@@ -15,11 +15,15 @@ export default function App() {
   const [boxYellow, setBoxYellow] = useState("box box-yellow");
 
   const [itemsRand, setItemsRand] = useState([]);
+  const [list, setList] = useState([]);
   const [sequences, setSequences] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [statusGame, setStatusGame] = useState(0);
   const [sequencesSuccess, setSequencesSuccess] = useState(0);
   const [messageStatus, setMessageStatus] = useState(START_MSG);
   const [indexClick, setIndexClick] = useState(0);
   const [clicksSuccess, setClicksSuccess] = useState(0);
+  const [currentBlink, setCurrentBlink] = useState("");
   const [display, setDisplay] = useState(0);
   const [timerResolver, setTimerResolver] = useState([]);
 
@@ -27,15 +31,12 @@ export default function App() {
     precision: 'secondTenths'
   });
 
-  const timerInterval = 1000;
+  const timerInterval = 1500;
   const iterations    = 2;
-  const numSequences  = 1;
+  const numSequences  = 2;
 
   let items = ["green", "blue", "red", "yellow"];
-  let list  = [];
-  let index = 0;
 
-  let currentBlink = "";
   let interval = null;
 
   const setBlink = (item) => {
@@ -89,51 +90,85 @@ export default function App() {
 
   const stopCycle = () => {
     removeAllBlink();
+
+    setMessageStatus(START_MSG);
     setItemsRand([]);
   }
 
-  const changeBlink = () => {
-    currentBlink = list[index];
-    setBlink(currentBlink);
-
-    interval = setInterval(() => {
-      removeBlink(currentBlink);
-      ++index;
-
-      if (index === list.length) {
-        removeAllBlink();
-        clearInterval(interval);
-        index = 0;
-
-        setSequences(sequences + 1);
-        setMessageStatus('Agora é com você.');
-
-        timer.start();
-
-        return () => {};
+  useEffect(() =>{
+    if (sequences === numSequences) {
+      console.log("End Sequence");
+      console.log(sequencesSuccess +"==="+ numSequences);
+      if (sequencesSuccess === numSequences) {
+        setMessageStatus('Você venceu.');
+      } else {
+        setMessageStatus('Você perdeu. Tente novamente.');
       }
 
-      currentBlink = list[index];
-      setBlink(currentBlink);
-    }, timerInterval);
-  };
+      setStatusGame(0); // @todo add constant
+      //closeGame();
+    }
+  }, [sequences, sequencesSuccess]);
+
+  useEffect(() => {
+    if (index === 0 ) {
+      return () => {};
+    }
+
+    console.log("useEffect index cond 1 " + index + " === " + list.length);
+    if (index === list.length) {
+      removeAllBlink();
+      clearInterval(interval);
+      setIndex(0);
+
+      setSequences(sequences + 1);
+      setMessageStatus('Agora é com você.');
+
+      timer.start();
+
+      return () => {};
+    } else if (index > 0) {
+      setCurrentBlink(list[index]);
+      setBlink(list[index]);
+    }
+  }, [index]);
 
   const closeGame = () => {
     setItemsRand([]);
     setIndexClick(0);
     setClicksSuccess(0);
-    setSequences(0);
+    setSequences( 0);
+    setIndex(0);
 
     removeAllBlink();
     clearInterval(interval);
-    index = 0;
 
     return () => {};
   };
 
+  useEffect(() => {
+    if (list.length > 0) {
+      setCurrentBlink(list[index]);
+      setBlink(list[index]);
+
+      console.log('changeBlink');
+      console.log(list[index] + "==" + index);
+
+      interval = setInterval(() => {
+
+        console.log('Interval');
+        console.log(currentBlink + "===" + index);
+        /*
+        removeBlink(currentBlink);
+        */
+        setIndex(index + 1);
+      }, timerInterval);
+
+    }
+  }, [list])
+
   const startRandom = () => {
     clearInterval(interval);
-    index = 0;
 
     let listRand = []; // checar sequências
     let previousItems = itemsRand;
@@ -145,13 +180,14 @@ export default function App() {
 
     listRand = ['red', 'yellow'];
     previousItems = previousItems.concat(listRand);
+
     setItemsRand(previousItems);
     setClicksSuccess(0);
     setIndexClick(0);
 
     setDisplay(previousItems.toString())
-    list = previousItems;
-    changeBlink();
+    setList(previousItems);
+    //changeBlink();
   };
 
   const startGame = () => {
@@ -160,43 +196,46 @@ export default function App() {
     startRandom();
   };
 
-  const checkResult = (clicksSuccess, numItemsRand) => {
-    console.log(clicksSuccess + "===" + numItemsRand);
-    if (clicksSuccess === numItemsRand) {
-      setSequencesSuccess(sequencesSuccess + 1);
+  useEffect(() => {
+    if (sequencesSuccess > 0 && sequences <= numSequences) {
+
       setIndexClick(0);
       setClicksSuccess(0);
+      console.log('Continue game');
       startRandom();
     }
+  }, [sequencesSuccess]);
 
-    if (sequences === numSequences) {
-      console.log("End Sequence");
-      console.log(sequencesSuccess +"==="+ numSequences);
-      if (sequencesSuccess === numSequences) {
-        setMessageStatus('Você venceu.');
-      } else {
-        setMessageStatus('Você perdeu. Tente novamente.');
-      }
 
-      return closeGame();
+  const checkResult = (clicksSuccess, numItemsRand) => {
+    console.log('checkResult');
+    console.log(sequences + "==" + numSequences);
+    console.log(clicksSuccess + " === " + numItemsRand);
+    if (clicksSuccess === numItemsRand) {
+      setSequencesSuccess(sequencesSuccess + 1);
+    } else {
+      // @todo Parar jogo e mostrar erro
     }
 
     timer.stop();
   };
 
-  const clickBox = (item) => {
-    let numItemsRand = itemsRand.length - 1;
+  useEffect(() => {
+    if (indexClick > 0) {
+      let checkIndexClick = indexClick;
+      let numItemsRand = itemsRand.length;
 
+      if (numItemsRand === checkIndexClick) {
+        checkResult(clicksSuccess, numItemsRand);
+      }
+    }
+  }, [indexClick]);
+
+  const clickBox = (item) => {
     if (itemsRand[indexClick] === item) {
       setClicksSuccess(clicksSuccess + 1);
     }
-
-    if (numItemsRand === indexClick) {
-      checkResult(clicksSuccess, numItemsRand);
-    } else {
-      setIndexClick(indexClick + 1);
-    }
-
+    setIndexClick(indexClick + 1);
   };
 
   return (
