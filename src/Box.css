@@ -111,8 +111,8 @@ button {
 }
 
 .box {
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
   margin: 6px;
   border:3px solid #000;
   cursor: pointer;
@@ -139,22 +139,36 @@ button {
 
 .box-green {
   background: green;
-
+}
+.box-green.current {
+  border: 3px solid white;
+  background-color: darkseagreen;
 }
 
 .box-red {
   background: red;
 }
 
+.box-red.current {
+  border: 3px solid white;
+  background: indianred;
+}
+
 .box-blue {
   background: blue;
+}
+
+.box-blue.current {
+  border:3px solid white;
+  background-color: cornflowerblue;
 }
 
 .box-yellow {
   background: yellow;
 }
 
-.box-current {
-  border:3px solid silver;
+.box-yellow.current {
+  border:3px solid white;
+  background-color: lightgoldenrodyellow;
 }
 

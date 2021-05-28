@@ -13,10 +13,7 @@ export default function AppStart() {
 
     return (
         <div className="box-app">
-
-
             <Game autostart={autostart} />
-
         </div>
     );
 

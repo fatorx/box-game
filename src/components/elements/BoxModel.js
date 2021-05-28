@@ -10,7 +10,7 @@ const BoxModel = props => {
 
     return (
         <>
-            <div className={`box box-${props.color} ${props.activate ? "box-current" : ""}`}
+            <div className={`box box-${props.color} ${props.activate ? "current" : ""}`}
                  onClick={handlerClick}   />
         </>
     );

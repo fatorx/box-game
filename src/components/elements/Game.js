@@ -13,6 +13,7 @@ const Game = ({ autostart }) => {
         isStart: false,
         isStop: false,
         isFinish: false,
+        isGameInteract: false,
         isUserInteract: false,
         currentColor: '',
         statusDesc: '',
@@ -25,18 +26,18 @@ const Game = ({ autostart }) => {
     };
 
     const [gameControl, setGameControl] = useState(gameObject);
-    const [display, setDisplay]     = useState('');
     const items = useMemo(() => ["green", "blue", "red", "yellow"], []);
 
     const ITERATIONS = 4;
+    const TIME_INTERVAL = 600;
 
     const Result = useCallback(() => {
         setGameControl(game => (
             {...game,
                 currentColor: '',
-                index: 0,
                 isStart: false,
-                isUserInteract: false
+                isGameInteract: false,
+                isUserInteract: true,
             })
         );
         //setTimeout(() => resetGame(), 3000);
@@ -47,7 +48,26 @@ const Game = ({ autostart }) => {
         setGameControl(game => (
             {...game,
                 currentColor: items[gameControl.index],
-                index: gameControl.index + 1
+                index: gameControl.index + 1,
+                statusDesc:  items[gameControl.index]
+            })
+        );
+        setTimeout(() => {
+            setGameControl(game => (
+                {...game,
+                    currentColor: '',
+                    statusDesc: ''
+
+                })
+            );
+        }, TIME_INTERVAL / 2);
+
+    }, [gameControl.index, gameControl.randomItems]);
+
+    const setColor = useCallback((color) => {
+        setGameControl(game => (
+            {...game,
+                currentColor: color,
             })
         );
         setTimeout(() => {
@@ -56,28 +76,37 @@ const Game = ({ autostart }) => {
                     currentColor: '',
                 })
             );
-        }, 400);
-        setDisplay(items[gameControl.index]);
-    }, [gameControl.index, gameControl.randomItems]);
+        }, TIME_INTERVAL / 2);
+
+    }, []);
 
     const resetGame = () => {
         setGameControl(gameObject);
-        setDisplay('');
         console.clear();
     }
 
     const clickStartGame = (status) => {
         if (gameControl.isStart !== status) {
-            setGameControl(game => ( {...game, isStart: status}) );
+            resetGame();
+            setGameControl(game => (
+                {...game,
+                    isStart: status,
+                }) );
         }
     };
 
     const clickBox = (item) => {
+        if (!gameControl.isUserInteract) {
+            return () => {};
+        }
+
         let indexClick   = gameControl.indexClick;
         let clickSuccess = gameControl.clicksSuccess;
         let items = gameControl.randomItems;
 
-        if (items[indexClick] === item) {
+        setColor(item);
+
+        if (items[indexClick] === item) { // correct answer, continue
             clickSuccess += 1;
         }
 
@@ -101,34 +130,36 @@ const Game = ({ autostart }) => {
             setGameControl(game => (
                 {...game,
                     randomItems: listRand,
-                    isUserInteract: true
+                    isGameInteract: true
                 })
             );
         }
     }, [gameControl.isStart, items]);
 
     useEffect(() => {
-        if (!gameControl.isUserInteract) {
+        if (!gameControl.isGameInteract) {
             return () => {};
         }
 
         console.log('-----------------------');
         console.log('useEffect User Interact');
-        const timer =
-            gameControl.index <= ITERATIONS
+
+        // In first interaction, execute setInterval with 500
+        //let interval = (gameControl.index > 0 ? TIME_INTERVAL : 500);
+
+        const timer = gameControl.index <= ITERATIONS
                 ? setInterval(() => {
                     changeColor()
-                }, 800)
+                }, TIME_INTERVAL)
                 : Result();
 
         return () => {
             clearInterval(timer);
         };
 
-    }, [gameControl.isUserInteract, gameControl.index, changeColor, Result])
+    }, [gameControl.isGameInteract, gameControl.index, changeColor, Result])
 
     useEffect(() => {
-        console.log('check result');
 
         let condItems  = (gameControl.randomItems.length > 0);
         if (condItems) {
@@ -138,16 +169,20 @@ const Game = ({ autostart }) => {
 
             let condWinner = (gameControl.indexClick === gameControl.clicksSuccess);
 
+            let condWrongClick = (gameControl.indexClick > gameControl.clicksSuccess);
+
             if (condFinish && condWinner) {
                 setGameControl(game => (
                     {...game,
-                        statusDesc: 'Você venceu!'
+                        statusDesc: 'Você venceu!',
+                        isUserInteract: false
                     })
                 );
-            } else if (condFinish) {
+            } else if (condFinish || condWrongClick) {
                 setGameControl(game => (
                     {...game,
-                        statusDesc: 'Você perdeu!'
+                        statusDesc: 'Você perdeu!',
+                        isUserInteract: false
                     })
                 );
             }
@@ -187,9 +222,10 @@ const Game = ({ autostart }) => {
             <div className="info-controls">
                 <ul>
                     <li>Seq: {gameControl.randomItems.toString()}</li>
+                    <li>GameInteract: {gameControl.isGameInteract ? 'TRUE' : 'FALSE'}</li>
+                    <li>UserInteract: {gameControl.isUserInteract ? 'TRUE' : 'FALSE'}</li>
                     <li>Status: {gameControl.statusDesc}</li>
-                    <li>Counter: {gameControl.index}</li>
-                    <li>Display: {display}</li>
+                    <li>Clicks: {gameControl.indexClick}</li>
                     <li>Click OK: {gameControl.clicksSuccess}</li>
                 </ul>
             </div>
