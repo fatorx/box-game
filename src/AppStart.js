@@ -1,21 +1,18 @@
-import React, { useState } from "react";
-
-//import Box from "./components/elements/Box";
+import React from "react";
 
 import "./Box.css";
 import "./App.css";
-import Game from "./components/elements/Game";
+import Game from "./components/elements/GameControls";
 
 export default function AppStart() {
     console.log("AppStart render");
 
-    const [autostart, setAutostart] = useState(false);
-
     return (
         <div className="box-app">
-            <Game autostart={autostart} />
+
+            <Game />
+
         </div>
     );
-
-
 }
+

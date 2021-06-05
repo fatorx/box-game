@@ -1,5 +1,5 @@
-
-@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
+/*
+@media screen and (min-width: 320px) and (max-width: 967px)  {
   html {
     transform: rotate(-90deg);
     transform-origin: left top;
@@ -9,60 +9,17 @@
     top: 100%;
     left: 0;
   }
-}
+}*/
+
+/* evitar scroll */
+/*html, body {margin: 0; overflow: hidden}*/
 
 body {
   display: flex;
   justify-content: center;
   background: black;
   color: white;
-}
-
-
-:root {
-  --blink-time: 1.5s;
-}
-
-.blink {
-  animation: var(--blink-time) blinker linear infinite;
-  -webkit-animation: var(--blink-time) blinker linear infinite;
-  -moz-animation: var(--blink-time) blinker linear infinite;
-}
-
-@-moz-keyframes blinker {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@-webkit-keyframes blinker {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes blinker {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  padding: 10px;
 }
 
 button {
@@ -76,9 +33,86 @@ button {
   text-align: center;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
-  width: 360px;
+
 }
+
+.box-model {
+  width: 120px;
+  height: 200px;
+}
+
+.box-board {
+  width: 300px;
+  height: 300px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+}
+
+.box-board .command {
+  width: 300px;
+  height: 300px;
+}
+
+.box-board .command-blue-magic {
+  background-image: url(./img/blue-background-circle.gif);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+
+.box-board .command-red-magic {
+  background-image: url(./img/red-background.gif);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+
+.box-board .command-green-magic {
+  background-image: url(./img/green-background-smoke.gif);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+
+.hide {
+  display: none;
+}
+
+.box-model-control {
+
+  position: fixed;
+  top: 345px;
+  width: 108px;
+  height: 140px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+
+.box-buttons-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 170px;
+  width: 96%;
+
+}
+
 
 .block-controls {
   display: flex;
@@ -91,6 +125,7 @@ button {
   margin-top:10px;
   margin-bottom:10px;
   padding: 20px;
+  width: 306px;
 }
 
 .box-items {
@@ -100,6 +135,7 @@ button {
   justify-content: space-between;
   border: 1px solid #ccc;
   margin-top:10px;
+
 }
 
 .box-buttons {
@@ -111,11 +147,23 @@ button {
 }
 
 .box {
-  width: 100px;
-  height: 100px;
-  margin: 6px;
+  width: 50px;
+  height: 50px;
+  margin: 10px;
   border:3px solid #000;
   cursor: pointer;
+  border-radius: 60%;
+}
+
+.board {
+  display: flex;
+  width: 60%;
+  height: 100%;
+  justify-content: flex-start;
+  border: 1px solid #ccc;
+  margin-top:10px;
+
+  transform: rotate(90deg);
 }
 
 .info-controls {
@@ -123,6 +171,8 @@ button {
   justify-content: flex-start;
   border: 1px solid #ccc;
   margin-top:10px;
+  width: 100%;
+  transform: rotate(90deg);
 }
 
 .info-controls ul {
@@ -172,3 +222,9 @@ button {
   background-color: lightgoldenrodyellow;
 }
 
+
+.select-magic {
+  display: flex;
+  flex-direction: row;
+  margin-top: 175px;
+}

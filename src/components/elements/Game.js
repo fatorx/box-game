@@ -2,8 +2,6 @@ import React, {useState, useEffect, useCallback, useMemo } from "react";
 
 import BoxModel from "./BoxModel";
 
-import "../../Box.css";
-import "../../App.css";
 import Random from "../math/Random";
 
 const Game = ({ autostart }) => {
@@ -31,7 +29,7 @@ const Game = ({ autostart }) => {
     const ITERATIONS = 4;
     const TIME_INTERVAL = 600;
 
-    const Result = useCallback(() => {
+    const startUserInteract = useCallback(() => {
         setGameControl(game => (
             {...game,
                 currentColor: '',
@@ -151,13 +149,13 @@ const Game = ({ autostart }) => {
                 ? setInterval(() => {
                     changeColor()
                 }, TIME_INTERVAL)
-                : Result();
+                : startUserInteract();
 
         return () => {
             clearInterval(timer);
         };
 
-    }, [gameControl.isGameInteract, gameControl.index, changeColor, Result])
+    }, [gameControl.isGameInteract, gameControl.index, changeColor, startUserInteract])
 
     useEffect(() => {
 
@@ -218,7 +216,10 @@ const Game = ({ autostart }) => {
                 )}
             </div>
 
-            <h3>Infos</h3>
+            <div className="board">
+
+            </div>
+
             <div className="info-controls">
                 <ul>
                     <li>Seq: {gameControl.randomItems.toString()}</li>
