@@ -30,7 +30,7 @@ const Command = ({option, view, command, callbackStatus}) => {
                 break;
         }
 
-        callbackStatus();
+        //callbackStatus();
         return element;
     }
     return (

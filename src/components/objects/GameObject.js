@@ -18,7 +18,8 @@ const GameObject = {
     clicksSuccess:0,
     indexSpell:0,
     name:'',
-    sequence:[]
+    sequence:[],
+    timerCmd: null
 };
 
 export default GameObject;

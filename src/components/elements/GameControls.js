@@ -11,47 +11,31 @@ const Game = () => {
     console.log("Game render");
 
     const [gameControl, setGameControl] = useState(gameObject);
-    const [timerCmd, setTimerCmd] = useState(null);
 
     const TIME_INTERVAL = 500;
     const LIMIT_ITEMS = 4;
-    let timeoutCommand = null;
 
-    const setColor = useCallback((color) => {
-        setGameControl(game => (
-            {...game,
-                currentColor: color,
-            })
-        );
-        setTimeout(() => {
-            setGameControl(game => (
-                {...game,
-                    currentColor: '',
-                })
-            );
-        }, TIME_INTERVAL);
+    let commands = [];
+    let controlInterval = null;
 
-    }, []);
+    const clickBoxCmd = (item) => {
+        commands.push(item);
+        let numCommands = commands.length;
 
-    const clickBox = (item) => {
+        clearInterval(controlInterval);
+        controlInterval = setInterval(() => {
+            console.log('Clear commands');
+            commands = [];
+        }, 700);
 
-        let indexClick   = gameControl.indexClick;
-        let clickItemsAdd = gameControl.clickItems;
-        let numClicks = clickItemsAdd.length + 1;
+        console.log(commands.toString());
 
-        setColor(item);
-        clickItemsAdd.push(item);
-
-        console.log("numClicks: " + numClicks + " - " + clickItemsAdd.toString());
-
-        if (numClicks === LIMIT_ITEMS) { // correct answer, continue
-            let statusCheck = false;
-            console.log("numClicks: " + numClicks + "=" + LIMIT_ITEMS);
+        if (numCommands === LIMIT_ITEMS) {
+            clearInterval(controlInterval);
 
             magics.map(v => {
-                if (v.sequence.toString() === clickItemsAdd.toString()) {
+                if (v.sequence.toString() === commands.toString()) {
                     console.log(v.name)
-
                     setGameControl(game => (
                         {...game,
                             name:v.name,
@@ -61,46 +45,13 @@ const Game = () => {
                             indexClick: 0
                         })
                     );
-
-                    statusCheck = true;
                 }
+
                 return v;
             });
 
-            if (!statusCheck) {
-                console.log('!statusCheck');
-                setGameControl(game => (
-                    {...game,
-                        name:'',
-                        optionStatus:false,
-                        status: 0,
-                        clickItems: [],
-                        indexClick: 0
-                    })
-                );
-            }
-
-            return true;
-        } else {
-            setGameControl(game => (
-                {...game,
-                    clickItems: clickItemsAdd,
-                    indexClick: indexClick + 1
-                })
-            );
+            commands = [];
         }
-
-        setTimerCmd(setTimeout(() => {
-            console.log('setGameControl');
-            setGameControl(game => (
-                {...game,
-                    currentColor: '',
-                    clickItems: [],
-                    indexClick: 0
-                })
-            );
-        }, 3000) );
-
     };
 
     const callbackStatus = () => {
@@ -142,13 +93,13 @@ const Game = () => {
                 <div className="box-model-control left">
 
                     <BoxModel
-                        fct={clickBox}
+                        fct={clickBoxCmd}
                         color={"green"}
                         activate={gameControl.currentColor === "green"}
                         key={1} />
 
                     <BoxModel
-                        fct={clickBox}
+                        fct={clickBoxCmd}
                         color={"red"}
                         activate={gameControl.currentColor === "red"}
                         key={2} />
@@ -158,13 +109,13 @@ const Game = () => {
                 <div className="box-model-control right">
 
                     <BoxModel
-                        fct={clickBox}
+                        fct={clickBoxCmd}
                         color={"blue"}
                         activate={gameControl.currentColor === "blue"}
                         key={3} />
 
                     <BoxModel
-                        fct={clickBox}
+                        fct={clickBoxCmd}
                         color={"yellow"}
                         activate={gameControl.currentColor === "yellow"}
                         key={4} />

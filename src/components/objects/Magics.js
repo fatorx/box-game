@@ -10,7 +10,7 @@ const Magics = [
     },
     {
         name:'green-magic',
-        sequence:['green', 'yellow', 'red', 'blue']
+        sequence:['green', 'red', 'yellow', 'blue']
     }
 ];
 
